@@ -1,0 +1,14 @@
+extends layout
+
+include mixins/_addStock
+
+block scriptsHead
+    script(src="https://code.highcharts.com/stock/highstock.js")
+    script(src="https://code.highcharts.com/stock/modules/exporting.js")
+
+block content
+    #stockChart(style="width: 1080px; height: 720px;")
+    +addStock()
+
+block scriptsBody
+    script(src="/dist/App.bundle.js")

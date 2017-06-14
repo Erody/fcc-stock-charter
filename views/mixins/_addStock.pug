@@ -1,0 +1,5 @@
+mixin addStock()
+    form(action="/api/addStock" method="POST").addStockForm
+        label(for="stockName") Name of the stock you would like to add
+        input(type="text" name="stockName" id="stockName")
+        input(type="submit" value="Submit")
