@@ -68,38 +68,6 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_url__);
-
-
-const requestParser = (function() {
-	const href = document.location.href;
-	const urlObj = __WEBPACK_IMPORTED_MODULE_0_url___default.a.parse(href, true);
-
-	return {
-		href,
-		urlObj,
-		getQueryStringValue: (key) => {
-			return ((urlObj && urlObj.query) && urlObj.query[key]) || null;
-		},
-		uriMinusPath: urlObj.protocol + '//' + urlObj.hostname
-	};
-})();
-
-$('.addStockForm').submit((e) => {
-	e.preventDefault();
-	let stock = $('#stockName');
-	const baseUrl = requestParser.uriMinusPath;
-	const data = { stock: stock.val(), baseUrl};
-	socket.emit('newStock', data);
-	stock.val('');
-});
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 const seriesOptions = [];
@@ -110,7 +78,9 @@ let seriesCounter = 0;
  * Create the chart when all data is loaded
  * @returns {undefined}
  */
-function createChart() {
+const createChart = exports.createChart = (options) => {
+
+	console.log(options);
 
 	Highcharts.stockChart('stockChart', {
 
@@ -144,9 +114,9 @@ function createChart() {
 			split: true
 		},
 
-		series: seriesOptions
+		series: options
 	});
-}
+};
 
 $.each(names, function (i, name) {
 
@@ -162,19 +132,57 @@ $.each(names, function (i, name) {
 		seriesCounter += 1;
 
 		if (seriesCounter === names.length) {
-			createChart();
+			createChart(seriesOptions);
 		}
 	});
 });
 
 /***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_url__);
+
+
+const requestParser = (function() {
+	const href = document.location.href;
+	const urlObj = __WEBPACK_IMPORTED_MODULE_0_url___default.a.parse(href, true);
+
+	return {
+		href,
+		urlObj,
+		getQueryStringValue: (key) => {
+			return ((urlObj && urlObj.query) && urlObj.query[key]) || null;
+		},
+		uriMinusPath: urlObj.protocol + '//' + urlObj.hostname
+	};
+})();
+
+$('.addStockForm').submit((e) => {
+	e.preventDefault();
+	let stock = $('#stockName');
+	const baseUrl = requestParser.uriMinusPath;
+	const data = { stock: stock.val(), baseUrl};
+	socket.emit('newStock', data);
+	stock.val('');
+});
+
+/***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-exports.connect = () => {
-	socket.on('stockChange', stock => console.log(stock));
-};
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__highChart__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__highChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__highChart__);
 
+
+socket.on('stockChange', data => {
+	console.log(`Received stockChange:`);
+	console.log(data);
+	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__highChart__["createChart"])([{name: data.stockName, data: data.data}])
+});
 
 /***/ }),
 /* 3 */
@@ -1733,15 +1741,13 @@ module.exports = function(module) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_io__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_io___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__modules_io__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_highChart__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_highChart__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_highChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__modules_highChart__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_form__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_form__ = __webpack_require__(1);
 
 
 
 
-__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__modules_io__["connect"])();
 
 /***/ })
 /******/ ]);

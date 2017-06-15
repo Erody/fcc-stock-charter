@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
 		request(`${data.baseUrl}:3000/api/getStock?stockName=${data.stock}`)
 			.then(res => JSON.parse(res))
 			.then(data => helpers.transformForHighchart(data))
-			.then(transformed => socket.emit('stockChange', transformed))
+			.then(transformed => socket.emit('stockChange', {stockName: data.stock, data: transformed}))
 			.catch(err => console.error(err))
 	});
 });

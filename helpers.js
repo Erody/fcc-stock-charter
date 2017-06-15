@@ -35,7 +35,7 @@ exports.transformForHighchart = (data) => {
 			values.renameProperty(key, key.slice(3))
 		});
 		const { open, high, low, close, volume} = values;
-		return [unixTimestamp, close];
+		return [Number(unixTimestamp), Number(close)];
 	});
 
 };

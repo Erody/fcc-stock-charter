@@ -6,7 +6,9 @@ let seriesCounter = 0;
  * Create the chart when all data is loaded
  * @returns {undefined}
  */
-function createChart() {
+const createChart = exports.createChart = (options) => {
+
+	console.log(options);
 
 	Highcharts.stockChart('stockChart', {
 
@@ -40,9 +42,9 @@ function createChart() {
 			split: true
 		},
 
-		series: seriesOptions
+		series: options
 	});
-}
+};
 
 $.each(names, function (i, name) {
 
@@ -58,7 +60,7 @@ $.each(names, function (i, name) {
 		seriesCounter += 1;
 
 		if (seriesCounter === names.length) {
-			createChart();
+			createChart(seriesOptions);
 		}
 	});
 });
