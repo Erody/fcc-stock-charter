@@ -1,3 +1,3 @@
 exports.connect = () => {
-	const socket = io();
+	socket.on('stockChange', stock => console.log(stock));
 };

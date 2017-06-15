@@ -49,8 +49,8 @@ $.each(names, function (i, name) {
 	$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
 
 		seriesOptions[i] = {
-			name: name,
-			data: data
+			name,
+			data
 		};
 
 		// As we're loading the data asynchronously, we don't know what order it will arrive. So

@@ -1,9 +1,13 @@
+require('dotenv').config({ path: 'variables.env'});
 const express = require('express');
 const path = require('path');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const request = require('request-promise-native');
 const helpers = require('./helpers');
+const routes = require('./routes/index');
+const apiRoutes = require('./routes/api');
 
 const PORT = process.env.PORT || 3000;
 
@@ -37,21 +41,41 @@ app.use(flash());
 // pass variables to our templates + all requests
 app.use((req, res, next) => {
 	res.locals.h = helpers;
+	res.locals.io = io;
 	res.locals.flashes = req.flash();
 	res.locals.user = req.user || null;
 	res.locals.currentPath = req.path;
 	next();
 });
 
-app.get('/', (req, res) => {
-	res.render('stockChart', { title: 'Stock chart'});
-});
+app.use('/', routes);
+app.use('/api', apiRoutes);
 
 io.on('connection', (socket) => {
 	console.log('A user connected');
 	socket.on('disconnect', () => console.log('A user disconnected'));
-	socket.on('chat message', msg => io.emit('chat message', msg));
+	// socket.on('stockChange', stocks => io.emit('stockChange', stocks));
+	socket.on('newStock', data => {
+		// todo REMOVE THE :3000 WHEN MOVING TO PRODUCTION
+		request(`${data.baseUrl}:3000/api/getStock?stockName=${data.stock}`)
+			.then(res => JSON.parse(res))
+			.then(data => helpers.transformForHighchart(data))
+			.then(transformed => socket.emit('stockChange', transformed))
+			.catch(err => console.error(err))
+	});
 });
 
+
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+// todo Adding stock
+	// user submits stock name via form
+	// value of text input is emitted via socket.io as 'newStock'
+	// check if stock exists
+	// on success
+		// stock gets added to database
+		// emit 'stockChange' with the new stocks
+		// re-render graph with new stocks on 'stockChange'
+	// on failure
+		// don't do anything
 
