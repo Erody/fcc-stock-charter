@@ -77,9 +77,9 @@ io.on('connection', (socket) => {
 				});
 				try {
 					await newStock.save();
-					socket.emit('stockChange', [...oldStocks, newStock])
+					io.emit('stockChange', [...oldStocks, newStock])
 				} catch(e) {
-					socket.emit('stockChange', [...oldStocks])
+					io.emit('stockChange', [...oldStocks])
 				}
 			})
 			.catch(err => console.error(err))

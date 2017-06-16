@@ -1,3 +1,7 @@
-import ioConnect from './modules/io'
-import highChart from './modules/highChart';
+import {listen} from './modules/io'
+import {init} from './modules/highChart';
 import form from './modules/form'
+
+
+init();
+listen();

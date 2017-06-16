@@ -12,4 +12,16 @@ module.exports = {
 		// name will be `App` because that is what we used above in our entry
 		filename: '[name].bundle.js'
 	},
+	module: {
+		loaders: [{
+			test: /.js$/,
+			loader: 'babel-loader',
+			include: [
+				path.resolve(__dirname, 'public/javascript')
+			],
+			query: {
+				presets: ['es2015']
+			}
+		}]
+	}
 };

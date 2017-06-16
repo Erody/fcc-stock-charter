@@ -1,4 +1,6 @@
 const request = require('request-promise-native');
+const mongoose = require('mongoose');
+const Stock = mongoose.model('Stock');
 
 exports.getStock = (req, res) => {
 	console.log(req.query);
@@ -14,6 +16,11 @@ exports.getStock = (req, res) => {
 		})
 		.then(json => res.json(json))
 		.catch(console.error);
+};
+
+exports.getInitialStock = async (req, res) => {
+	const stocks = await Stock.find();
+	res.json(stocks);
 };
 
 exports.test = (req, res) => {

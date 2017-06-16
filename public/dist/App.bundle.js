@@ -63,22 +63,25 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-const seriesOptions = [];
-const names = ['MSFT', 'AAPL', 'GOOG'];
-let seriesCounter = 0;
+"use strict";
+
+
+var seriesOptions = [];
+var names = ['MSFT', 'AAPL', 'GOOG'];
+var seriesCounter = 0;
 
 /**
  * Create the chart when all data is loaded
  * @returns {undefined}
  */
-const createChart = exports.createChart = (options) => {
+var createChart = exports.createChart = function (options) {
 
 	console.log(options);
 
@@ -90,7 +93,7 @@ const createChart = exports.createChart = (options) => {
 
 		yAxis: {
 			labels: {
-				formatter: function () {
+				formatter: function formatter() {
 					return (this.value > 0 ? ' + ' : '') + this.value + '%';
 				}
 			},
@@ -118,74 +121,106 @@ const createChart = exports.createChart = (options) => {
 	});
 };
 
-$.each(names, function (i, name) {
+// $.each(names, function (i, name) {
+//
+// 	$.getJSON(`${window.location.href}api/getInitialStocks`, function (data) {
+//
+// 		seriesOptions[i] = {
+// 			name,
+// 			data
+// 		};
+//
+// 		// As we're loading the data asynchronously, we don't know what order it will arrive. So
+// 		// we keep a counter and create the chart when all the data is loaded.
+// 		seriesCounter += 1;
+//
+// 		if (seriesCounter === names.length) {
+// 			createChart(seriesOptions);
+// 		}
+// 	});
+// });
 
-	$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-
-		seriesOptions[i] = {
-			name,
-			data
-		};
-
-		// As we're loading the data asynchronously, we don't know what order it will arrive. So
-		// we keep a counter and create the chart when all the data is loaded.
-		seriesCounter += 1;
-
-		if (seriesCounter === names.length) {
-			createChart(seriesOptions);
-		}
+exports.init = function () {
+	$.getJSON(window.location.href + 'api/getInitialStock', function (initialData) {
+		createChart(initialData);
 	});
-});
+};
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_url___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_url__);
 
 
-const requestParser = (function() {
-	const href = document.location.href;
-	const urlObj = __WEBPACK_IMPORTED_MODULE_0_url___default.a.parse(href, true);
+var _url = __webpack_require__(8);
+
+var _url2 = _interopRequireDefault(_url);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var requestParser = function () {
+	var href = document.location.href;
+	var urlObj = _url2.default.parse(href, true);
 
 	return {
-		href,
-		urlObj,
-		getQueryStringValue: (key) => {
-			return ((urlObj && urlObj.query) && urlObj.query[key]) || null;
+		href: href,
+		urlObj: urlObj,
+		getQueryStringValue: function getQueryStringValue(key) {
+			return urlObj && urlObj.query && urlObj.query[key] || null;
 		},
 		uriMinusPath: urlObj.protocol + '//' + urlObj.hostname
 	};
-})();
+}();
 
-$('.addStockForm').submit((e) => {
+$('.addStockForm').submit(function (e) {
 	e.preventDefault();
-	let stock = $('#stockName');
-	const baseUrl = requestParser.uriMinusPath;
-	const data = { stock: stock.val(), baseUrl};
+	var stock = $('#stockName');
+	var baseUrl = requestParser.uriMinusPath;
+	var data = { stock: stock.val(), baseUrl: baseUrl };
 	socket.emit('newStock', data);
 	stock.val('');
 });
 
 /***/ }),
 /* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__highChart__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__highChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__highChart__);
 
 
-socket.on('stockChange', data => {
-	console.log(`Received stockChange:`);
-	console.log(data);
-	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__highChart__["createChart"])(data);
-});
+var _highChart = __webpack_require__(0);
+
+exports.listen = function () {
+	socket.on('stockChange', function (data) {
+		console.log('Received stockChange:');
+		console.log(data);
+		(0, _highChart.createChart)(data);
+	});
+};
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _io = __webpack_require__(2);
+
+var _highChart = __webpack_require__(0);
+
+var _form = __webpack_require__(1);
+
+var _form2 = _interopRequireDefault(_form);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _highChart.init)();
+(0, _io.listen)();
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -721,10 +756,10 @@ socket.on('stockChange', data => {
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module), __webpack_require__(9)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module), __webpack_require__(10)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -815,7 +850,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -907,18 +942,18 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(4);
-exports.encode = exports.stringify = __webpack_require__(5);
+exports.decode = exports.parse = __webpack_require__(5);
+exports.encode = exports.stringify = __webpack_require__(6);
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -945,8 +980,8 @@ exports.encode = exports.stringify = __webpack_require__(5);
 
 
 
-var punycode = __webpack_require__(3);
-var util = __webpack_require__(8);
+var punycode = __webpack_require__(4);
+var util = __webpack_require__(9);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -1021,7 +1056,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(6);
+    querystring = __webpack_require__(7);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -1657,7 +1692,7 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1680,7 +1715,7 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 var g;
@@ -1707,7 +1742,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -1732,21 +1767,6 @@ module.exports = function(module) {
 	}
 	return module;
 };
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_io__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_highChart__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_highChart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__modules_highChart__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_form__ = __webpack_require__(1);
-
-
-
 
 
 /***/ })

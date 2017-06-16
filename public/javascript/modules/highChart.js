@@ -46,21 +46,27 @@ const createChart = exports.createChart = (options) => {
 	});
 };
 
-$.each(names, function (i, name) {
+// $.each(names, function (i, name) {
+//
+// 	$.getJSON(`${window.location.href}api/getInitialStocks`, function (data) {
+//
+// 		seriesOptions[i] = {
+// 			name,
+// 			data
+// 		};
+//
+// 		// As we're loading the data asynchronously, we don't know what order it will arrive. So
+// 		// we keep a counter and create the chart when all the data is loaded.
+// 		seriesCounter += 1;
+//
+// 		if (seriesCounter === names.length) {
+// 			createChart(seriesOptions);
+// 		}
+// 	});
+// });
 
-	$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-
-		seriesOptions[i] = {
-			name,
-			data
-		};
-
-		// As we're loading the data asynchronously, we don't know what order it will arrive. So
-		// we keep a counter and create the chart when all the data is loaded.
-		seriesCounter += 1;
-
-		if (seriesCounter === names.length) {
-			createChart(seriesOptions);
-		}
+exports.init = () => {
+	$.getJSON(`${window.location.href}api/getInitialStock`, function (initialData) {
+		createChart(initialData)
 	});
-});
+};
