@@ -1,10 +1,13 @@
 require('dotenv').config({ path: 'variables.env'});
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const request = require('request-promise-native');
+require('./models/Stock');
+const Stock = mongoose.model('Stock');
 const helpers = require('./helpers');
 const routes = require('./routes/index');
 const apiRoutes = require('./routes/api');
@@ -14,6 +17,13 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+
+// Connect to our Database and handle an bad connections
+mongoose.connect(process.env.DATABASE);
+mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
+mongoose.connection.on('error', (err) => {
+	console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views')); // this is the folder where we keep our pug files
@@ -60,7 +70,15 @@ io.on('connection', (socket) => {
 		request(`${data.baseUrl}:3000/api/getStock?stockName=${data.stock}`)
 			.then(res => JSON.parse(res))
 			.then(data => helpers.transformForHighchart(data))
-			.then(transformed => socket.emit('stockChange', {stockName: data.stock, data: transformed}))
+			.then(async transformed => {
+				const oldStocks = await Stock.find();
+				const newStock = new Stock({
+					name: data.stock,
+					data: transformed
+				});
+				await newStock.save();
+				socket.emit('stockChange', {stockName: data.stock, data: transformed})
+			})
 			.catch(err => console.error(err))
 	});
 });
@@ -76,6 +94,7 @@ server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 		// stock gets added to database
 		// emit 'stockChange' with the new stocks
 		// re-render graph with new stocks on 'stockChange'
+		// show success flash message
 	// on failure
-		// don't do anything
+		// show error flash message
 
