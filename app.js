@@ -64,7 +64,6 @@ app.use('/api', apiRoutes);
 io.on('connection', (socket) => {
 	console.log('A user connected');
 	socket.on('disconnect', () => console.log('A user disconnected'));
-	// socket.on('stockChange', stocks => io.emit('stockChange', stocks));
 	socket.on('newStock', data => {
 		// todo REMOVE THE :3000 WHEN MOVING TO PRODUCTION
 		request(`${data.baseUrl}:3000/api/getStock?stockName=${data.stock}`)
@@ -76,8 +75,12 @@ io.on('connection', (socket) => {
 					name: data.stock,
 					data: transformed
 				});
-				await newStock.save();
-				socket.emit('stockChange', {stockName: data.stock, data: transformed})
+				try {
+					await newStock.save();
+					socket.emit('stockChange', [...oldStocks, newStock])
+				} catch(e) {
+					socket.emit('stockChange', [...oldStocks])
+				}
 			})
 			.catch(err => console.error(err))
 	});

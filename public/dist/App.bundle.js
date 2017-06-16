@@ -181,7 +181,7 @@ $('.addStockForm').submit((e) => {
 socket.on('stockChange', data => {
 	console.log(`Received stockChange:`);
 	console.log(data);
-	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__highChart__["createChart"])([{name: data.stockName, data: data.data}])
+	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__highChart__["createChart"])(data);
 });
 
 /***/ }),
