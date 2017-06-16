@@ -14,11 +14,20 @@ const requestParser = (function() {
 	};
 })();
 
-$('.addStockForm').submit((e) => {
+$('.addStockForm').submit(e => {
 	e.preventDefault();
-	let stock = $('#stockName');
+	const stock = $('#stockName');
 	const baseUrl = requestParser.uriMinusPath;
 	const data = { stock: stock.val(), baseUrl};
 	socket.emit('newStock', data);
+	stock.val('');
+});
+
+$('.removeStockForm').submit(e => {
+	e.preventDefault();
+	const stock = $('#stockNameRemove');
+	const baseUrl = requestParser.uriMinusPath;
+	const data = { stock: stock.val(), baseUrl};
+	socket.emit('removeStock', data);
 	stock.val('');
 });

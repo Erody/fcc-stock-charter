@@ -182,6 +182,15 @@ $('.addStockForm').submit(function (e) {
 	stock.val('');
 });
 
+$('.removeStockForm').submit(function (e) {
+	e.preventDefault();
+	var stock = $('#stockNameRemove');
+	var baseUrl = requestParser.uriMinusPath;
+	var data = { stock: stock.val(), baseUrl: baseUrl };
+	socket.emit('removeStock', data);
+	stock.val('');
+});
+
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {

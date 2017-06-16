@@ -72,32 +72,33 @@ io.on('connection', (socket) => {
 			.then(async transformed => {
 				const oldStocks = await Stock.find();
 				const newStock = new Stock({
-					name: data.stock,
+					name: data.stock.toUpperCase(),
 					data: transformed
 				});
 				try {
 					await newStock.save();
 					io.emit('stockChange', [...oldStocks, newStock])
 				} catch(e) {
-					io.emit('stockChange', [...oldStocks])
+					// if stock already exists
+					// just prevent the error message.
 				}
 			})
 			.catch(err => console.error(err))
 	});
+	socket.on('removeStock', data => {
+		// todo REMOVE THE :3000 WHEN MOVING TO PRODUCTION
+		request(`${data.baseUrl}:3000/api/removeStock/${data.stock}`)
+			.then(res => JSON.parse(res))
+			.then(async res => {
+				if (res.status === 'success') {
+					const stocks = await Stock.find();
+					io.emit('stockChange', stocks);
+				}
+			})
+	})
 });
 
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
-// todo Adding stock
-	// user submits stock name via form
-	// value of text input is emitted via socket.io as 'newStock'
-	// check if stock exists
-	// on success
-		// stock gets added to database
-		// emit 'stockChange' with the new stocks
-		// re-render graph with new stocks on 'stockChange'
-		// show success flash message
-	// on failure
-		// show error flash message
-
+// todo Make it prettier

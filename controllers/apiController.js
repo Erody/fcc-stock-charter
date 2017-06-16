@@ -32,3 +32,12 @@ exports.test = (req, res) => {
 		.catch(console.error);
 
 };
+
+exports.removeStock = async (req, res) => {
+	try {
+		await Stock.remove({name: req.params.stock.toUpperCase()});
+		res.json({status: 'success'})
+	} catch(e) {
+		res.json({status: 'error', message: e})
+	}
+};
